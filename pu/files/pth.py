@@ -27,6 +27,9 @@ class PthFile(object):
         if path not in self.entries:
             self.entries.append(path)
 
+    def remove(self, path):
+        self.entries.remove(path)
+
     def save(self):
         with self.path.open('w') as f:
             for path in self.entries:

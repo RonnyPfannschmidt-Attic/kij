@@ -28,6 +28,15 @@ def test_append(pth, tmpdir, item):
     pth.append(item)
     assert pth.entries == [item]
 
+def test_remove(pth, tmpdir, item):
+
+    pth.append(item)
+    assert pth.entries == [item]
+
+    # dont get double entries
+    pth.remove(item)
+    assert pth.entries == []
+
 def test_save_relative(pth, pthfile, tmpdir, item):
     pth.append(item)
     pth.save()

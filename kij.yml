@@ -1,0 +1,6 @@
+name: kij
+summary: experiment about replacing distutils, setuptools, virtualenv and pip
+version: !sh hg parents --template '{latesttag}.dev{latesttagdistance}\n'
+packages:
+- kij.*
+

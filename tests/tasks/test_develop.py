@@ -1,13 +1,6 @@
 from pu.tasks.install import LinkPTH, UnlinkPTH
 from pu.files.pth import PthFile
 
-def pytest_funcarg__site(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
-    return tmpdir.ensure('site', dir=True)
-
-def pytest_funcarg__source(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
-    return tmpdir.ensure('source', dir=True)
 
 
 def test_enable(site, source):

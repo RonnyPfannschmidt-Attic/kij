@@ -7,6 +7,7 @@ from pu.tasks.install import LinkPTH
 
 def link_command(config, queue):
     #XXX: handle fscked paths?
+    #XXX: scripts
     queue.add_task(LinkPTH,
                    source=config.source,
                    site=config.site,

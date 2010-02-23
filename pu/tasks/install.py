@@ -5,6 +5,8 @@ class LinkTask(object):
     def __init__(self, site, source):
         self.site = site
         self.source = source
+    def __call__(self):
+        self.run()
 
 class LinkPTH(LinkTask):
 

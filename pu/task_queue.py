@@ -1,32 +1,57 @@
-'''
+"""
 
     :license: MIT/PSF
     :copyright: 2010 by Ronny Pfannschmidt <Ronny.Pfannschmidt@gmx.de>
-'''
+"""
 
 class Queue(object):
     def __init__(self):
-        self._added = set()
-        self.items = []
+        self.depends = {}
+        self.completed = set()
+        self.runnable = set()
+
+    def find_and_add_new_runnable(self):
+        found = set()
+        for k, v in self.depends.items():
+            if hasattr(k, '__iter__'):
+                new_items = list(k)
+                for item in new_items:
+                    self.add(new, parent, l)
+            if not v-self.completed:
+                self.runnable.add(k)
+
+    def failed(self, t):
+        self.completed.add(t) #XXX: this is going to eat me
 
     def next(self):
-        if self.items:
-            return self.items.pop()
-        else:
-            raise StopIteration
+        if not self.runnable:
+            self.find_and_add_new_runnable() #XXX: expensive
+            if not set(self.depends)-self.completed:
+                raise StopIteration
+
+
+        return self.runnable.pop()
+
 
     def __iter__(self):
         return self
+    def __len__(self):
+        return len(self.depends) - len(self.completed)
 
-    def add_task(self, task, *k, **kw):
-        key = task, k, tuple(sorted(kw.items()))
-        if key in self._added:
-            return
-        self._added.add(key)
-        task = task(*k, **kw)
-        self.items.append(task)
-        return task
+    def add(self, task, requires=None):
+        if task not in self.depends:
+            self.depends[task] = set()
+        if requires:
+            self.depends[task].add(requires)
+
 
     def run_all(self):
         for item in self:
-            item.run()
+            try:
+                item()
+                self.completed.add(item)
+            except:
+                #log fail?
+                self.failed(item)
+
+

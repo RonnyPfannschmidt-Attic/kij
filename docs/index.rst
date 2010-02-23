@@ -24,5 +24,6 @@ TBD
 
 
 
-.. contents::
-  api.rst
+.. toctree::
+
+  api

@@ -20,8 +20,11 @@ class Queue(object):
             if not v-self.completed:
                 self.runnable.add(k)
 
-    def failed(self, t):
-        self.completed.add(t) #XXX: this is going to eat me
+    def report_failure(self, t):
+        self.completed.add(t)
+
+    def report_sucess(self, t):
+        self.completed.add(t)
 
     def next(self):
         if not self.runnable:
@@ -49,9 +52,10 @@ class Queue(object):
         for item in self:
             try:
                 item()
-                self.completed.add(item)
+                self.report_sucess(item)
             except:
-                #log fail?
-                self.failed(item)
+                #reraise if report_failure tells us to do so
+                if self.report_failure(item):
+                    raise
 
 

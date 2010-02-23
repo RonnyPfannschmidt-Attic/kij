@@ -30,4 +30,5 @@ def test_build_and_compile(source, tmpdir):
 
     queue.run_all()
     assert build_lib.join('testpkg/__init__.py').check()
+    assert build_lib.join('testpkg/__init__.pyc').check()
 

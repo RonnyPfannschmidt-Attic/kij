@@ -26,7 +26,8 @@ def test_build_and_compile(source, tmpdir):
     queue.add(copy)
 
     compile = CompileByteCode(build_lib=build_lib)
-    queue.add(compile, requires=copy)
+    queue.add(compile)
+    queue.add(copy, parent=compile)
 
     queue.run_all()
     assert build_lib.join('testpkg/__init__.py').check()

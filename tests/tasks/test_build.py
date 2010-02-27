@@ -30,6 +30,11 @@ def test_build_and_compile(source, tmpdir):
     queue.add(copy, parent=compile)
 
     queue.run_all()
+    target =  build_lib.join('testpkg/__init__.pyc')
     assert build_lib.join('testpkg/__init__.py').check()
-    assert build_lib.join('testpkg/__init__.pyc').check()
+    assert target.check()
+    import imp
+    magic = imp.get_magic()
+    target_magic = target.read()[:4]
+    assert target_magic == magic
 

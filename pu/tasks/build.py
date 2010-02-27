@@ -16,6 +16,10 @@ class CompileByteCode(TaskBase):
     """
     compiles all python files below the target directory
     uses the optimizer settings of the current interpreter
+
+    .. warning::
+
+        ignores `sys.dont_write_bytecode`
     """
     keys = 'build_lib',
 

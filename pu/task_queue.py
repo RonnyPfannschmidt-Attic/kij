@@ -30,7 +30,6 @@ class Queue(object):
         return bool(found)
 
 
-
     def report_failure(self, t):
         self.completed.add(t) #XXX: evil
         self.running.remove(t)
@@ -41,14 +40,11 @@ class Queue(object):
 
     def next(self):
         if not self.runnable:
-            f = self.find_and_add_new_runnable() #XXX: expensive
+            #XXX: expensive
+            f = self.find_and_add_new_runnable()
             while f and not self.runnable:
-                f = self.find_and_add_new_runnable() #XXX: expensive
-            
-            print 'dep', set(self.depends)
-            print 'don', self.completed
-            print 'run', self.runnable
-        
+                f = self.find_and_add_new_runnable()
+
         if not self.runnable:
             raise StopIteration
 
@@ -58,26 +54,42 @@ class Queue(object):
 
     def __iter__(self):
         return self
+
     def __len__(self):
         return len(self.depends) - len(self.completed)
 
     def add(self, task, parent=None):
+        """add a `task`
+        if `parent` is given this task is a new dependency for parent
+        """
+
         if task not in self.depends:
             self.depends[task] = set()
         if parent:
             self.depends[parent].add(task)
 
+    def run_all_possible(self):
+        """runs all tasks it can complete
 
-    def run_all(self):
+        leaves the queue in a state where 
+        all completable tasks are completed
+        """
         for item in self:
             try:
                 item()
                 self.report_sucess(item)
-                print 'all:', self.depends.keys()
-                print 'completed', self.completed
             except RuntimeError:
                 #reraise if report_failure tells us to do so
                 if self.report_failure(item):
                     raise
 
+    def run_all(self):
+        """try to run all tasks
+
+        if some tasks are unaccessible
+        :raises: RuntimeError
+        """
+        self.run_all_possible()
+        if len(self.completed) < len(self.depends):
+            raise RuntimeError('not all tasks are executable')
 

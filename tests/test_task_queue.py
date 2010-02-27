@@ -72,5 +72,19 @@ def test_dependencies():
     queue = Queue()
     queue.add(SimpleTask(3))
     queue.run_all()
+    assert len(queue.completed) == 4
 
+
+
+def test_dependency_cycle_wont_complete_all():
+    queue = Queue()
+    base = SimpleTask(1)
+
+    queue.add(base)
+    a_runnable = next(queue)
+    queue.add(base, a_runnable)
+    queue.run_all_possible()
+    assert set(queue.depends) > queue.completed
+
+    py.test.raises(RuntimeError, queue.run_all)
 

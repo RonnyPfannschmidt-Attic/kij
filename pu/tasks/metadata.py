@@ -1,4 +1,4 @@
-
+from .util import TaskBase
 
 def find_packages(base, start):
     result = []
@@ -9,25 +9,31 @@ def find_packages(base, start):
     return result
 
 
+class FindPackages(TaskBase):
+    keys = 'source', 'match',
+    result = None
 
-
-
-
-
-class FindPackages(object):
-    def __init__(self, source, match):
-        self.source = source
-        self.match = match
-        self.result = None
-
-    def run(self):
+    def __call__(self):
         deep = self.match[-2:] == '.*'
         elements = self.match.split('.')
         if deep:
             elements.pop()
 
-        self.result = find_packages(self.source, self.source.join(*elements))
+        self.result = find_packages(self.source,
+                                    self.source.join(*elements))
         if not self.result:
             raise IOError('package %s not found below %s' % (
                            self.match, self.source))
+
+
+
+class ReadYamlMetadata(TaskBase):
+    keys = 'source',
+    result = None
+
+    def __call__(self):
+        from pu.files.dist import DistFile
+        self.result = DistFile(self.source.join('kij.yaml'))
+
+
 

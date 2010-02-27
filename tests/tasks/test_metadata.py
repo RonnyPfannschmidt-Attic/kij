@@ -1,5 +1,6 @@
 import py
 from pu.tasks.metadata import FindPackages, find_packages
+from pu.tasks.metadata import ReadYamlMetadata
 
 def test_find_packages(source):
     pkg = source.join('pkg')
@@ -16,16 +17,23 @@ def test_find_packages_task(source):
     pkg = source.join('pkg')
     source.ensure('pkg/__init__.py')
 
-    task = FindPackages(source, 'pkg')
-    task.run()
+    task = FindPackages(source=source, match='pkg')
+    task()
     assert task.result == ['pkg']
 
     task.match = 'missing'
-    py.test.raises(IOError, task.run)
+    py.test.raises(IOError, task)
 
     task.match = 'pkg.*'
-    task.run()
+    task()
     assert task.result == ['pkg']
 
 
 
+
+def test_read_yaml_task(source):
+    source.join('kij.yaml').write('name: test\npackages: [foo, bar]')
+    task = ReadYamlMetadata(source=source)
+    task()
+    assert task.result.name == 'test'
+    assert task.result.packages == ['foo', 'bar']

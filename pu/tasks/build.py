@@ -1,10 +1,7 @@
+from pu.tasks.util import TaskBase
 
-
-class CopyModulesToBuild(object):
-    def __init__(self, source, build_lib):
-        self.source = source
-        self.build_lib = build_lib
-
+class CopyModulesToBuild(TaskBase):
+    keys = 'source', 'build_lib'
 
     def __call__(self):
         self.build_lib.ensure(dir=1)
@@ -15,12 +12,17 @@ class CopyModulesToBuild(object):
             target.write(module.read())
 
 
-
-
-class CompileByteCode(object):
-    def __init__(self, build_lib):
-        self.build_lib = build_lib
+class CompileByteCode(TaskBase):
+    """
+    compiles all python files below the target directory
+    uses the optimizer settings of the current interpreter
+    """
+    keys = 'build_lib',
 
     def __call__(self):
+        from py_compile import compile
         for x in self.build_lib.visit('*.py'):
-            x.new(ext='.pyc').ensure() #XXX: actually compile
+            compile(str(x))
+
+
+

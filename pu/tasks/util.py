@@ -5,7 +5,7 @@
     utility base classes and functions
 """
 
-import Queue
+from collections import deque
 from blinker import Namespace
 
 ns = Namespace()
@@ -63,31 +63,38 @@ class TaskBase(object):
             return getattr(self, default_method)(item)
 
     def _requirement_succeeded(self, requirement):
+        self._enqueue_next_requirement()
         return self._dispatch('success', requirement)
 
     def _requirement_failed(self, requirement):
+        #XXX: how to deal with failure
         return self._dispatch('failure', requirement)
+
+    def _enqueue_next_requirement(self):
+        if self.requirements:
+            task = self.requirements.popleft()(**self._kw)
+            task_succeeded.connect(
+                    self._requirement_succeeded,
+                    sender=task)
+            task_failed.connect(
+                    self._requirement_failed,
+                    sender=task)
+            self.queue.append(task)
+
 
     def next(self):
         if self.queue is None:
-            self.queue = Queue.Queue()
+            self.queue = deque()
             #XXX: we need to re-suffle the connections inside of queue
             #     that is absolutely required since
             #     the returned requirement might already be in the queue
             #     but with different identity
             if self.requirements:
-                self.requirements = Queue()
-                task = req(**self._kw)
-                task_succeeded.connect(
-                        self._requirement_succeeded,
-                        sender=task)
-                task_failed.connect(
-                        self._requirement_failed,
-                        sender=task)
-                self.queue.put_nowait(task)
-        try:
-            return self.queue.get_nowait()
-        except Queue.Empty:
+                self.requirements = deque(self.requirements)
+                self._enqueue_next_requirement()
+        if self.queue:
+            return self.queue.popleft()
+        else:
             raise StopIteration
 
 

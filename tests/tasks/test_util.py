@@ -1,8 +1,16 @@
 import py
 from pu.tasks.util import TaskBase, task_succeeded, task_failed
-
+from pu.task_queue import Queue
 class Omg(TaskBase):
     keys = ()
+
+    def __call__(self):
+        pass
+
+class NeedOmg(Omg):
+    keys = ()
+    requirements = Omg,
+
 
 class U(TaskBase):
     keys = 'name', 'age'
@@ -45,3 +53,10 @@ def test_base():
 
 
 
+def test_requirement():
+    queue = Queue()
+    task = NeedOmg()
+    depends = next(task)
+    py.test.raises(StopIteration, next, task)
+    queue.add(task)
+    queue.run_all()

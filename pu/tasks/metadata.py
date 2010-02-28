@@ -1,12 +1,13 @@
 from .util import TaskBase
 
+
 def find_packages(base, start):
-    result = []
     if start.join('__init__.py').check(file=1):
-        result.append(start.relto(base).replace('/','.'))
-        for path in start.listdir(lambda p:p.check(dir=1)):
-            result.extend(find_packages(base, path))
-    return result
+        package = start.relto(base).replace('/', '.')
+        yield package
+        for path in start.listdir(lambda p: p.check(dir=1)):
+            for result in find_packages(base, path):
+                yield result
 
 
 class FindPackages(TaskBase):
@@ -19,12 +20,11 @@ class FindPackages(TaskBase):
         if deep:
             elements.pop()
 
-        self.result = find_packages(self.source,
-                                    self.source.join(*elements))
+        self.result = list(find_packages(self.source,
+                                         self.source.join(*elements)))
         if not self.result:
             raise IOError('package %s not found below %s' % (
                            self.match, self.source))
-
 
 
 class ReadYamlMetadata(TaskBase):
@@ -34,6 +34,5 @@ class ReadYamlMetadata(TaskBase):
     def __call__(self):
         from pu.files.dist import DistFile
         self.result = DistFile(self.source.join('kij.yaml'))
-
 
 

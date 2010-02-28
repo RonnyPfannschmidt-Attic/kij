@@ -1,5 +1,5 @@
 import py
-from pu.tasks.util import TaskBase
+from pu.tasks.util import TaskBase, task_succeeded, task_failed
 
 class Omg(TaskBase):
     keys = ()
@@ -22,10 +22,26 @@ def test_base():
     assert hash(u1) == hash(u2)
 
     o = Omg()
-    assert o.report_success(o) is None
-    assert u1.report_failure(o) is o
-    assert u1.report_success(u2) == 'a'
-    assert u1.report_success(o) is None
+    with task_succeeded.temporarily_connected_to(
+            o._requirement_succeeded,
+            sender=o):
+        result = task_succeeded.send(o)
+        assert result[0][1] is None
+
+    with task_failed.temporarily_connected_to(
+            u1._requirement_failed,
+            sender=o):
+        assert task_failed.send(o)[0][1] is o
+
+    with task_succeeded.temporarily_connected_to(
+            u1._requirement_succeeded,
+            sender=u2):
+        assert task_succeeded.send(u2)[0][1] == 'a'
+
+    with task_succeeded.temporarily_connected_to(
+            u1._requirement_succeeded,
+            sender=o):
+        assert task_succeeded.send(o)[0][1] is None
 
 
 

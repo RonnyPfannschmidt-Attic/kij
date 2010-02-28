@@ -1,7 +1,9 @@
 import py
-from pu.tasks.metadata import FindPackages, find_packages
+from pu.tasks.metadata import FindPackages, find_packages as gen_find_packages
 from pu.tasks.metadata import ReadYamlMetadata
 
+def find_packages(source, pkg):
+    return list(gen_find_packages(source, pkg))
 
 def test_find_packages(source):
     pkg = source.join('pkg')

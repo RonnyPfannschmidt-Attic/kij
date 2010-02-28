@@ -71,11 +71,19 @@ class TaskBase(object):
     def next(self):
         if self.queue is None:
             self.queue = Queue.Queue()
+            #XXX: we need to re-suffle the connections inside of queue
+            #     that is absolutely required since
+            #     the returned requirement might already be in the queue
+            #     but with different identity
             if self.requirements:
                 self.requirements = Queue()
                 task = req(**self._kw)
-                task_succeeded.connect(self._requirement_succeeded, sender=task)
-                task_failed.connect(self._requirement_failed, sender=task)
+                task_succeeded.connect(
+                        self._requirement_succeeded,
+                        sender=task)
+                task_failed.connect(
+                        self._requirement_failed,
+                        sender=task)
                 self.queue.put_nowait(task)
         try:
             return self.queue.get_nowait()

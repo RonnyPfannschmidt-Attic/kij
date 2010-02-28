@@ -2,7 +2,9 @@ import py
 from pu.task_queue import Queue
 from pu.tasks.install import LinkPTH
 
+
 class SimpleTask(object):
+
     def __init__(self, number):
         self.number = number
         self.ndeps = number
@@ -38,7 +40,8 @@ def test_create():
 
 def test_simple():
     queue = Queue()
-    queue.add(SimpleTask(1)) # will create SimpleTask(0) as dependency
+    # will create SimpleTask(0) as dependency
+    queue.add(SimpleTask(1))
     first_task = next(queue)
     assert first_task.number == 0
 
@@ -51,6 +54,7 @@ def test_simple():
     assert next_task.number == 1
     queue.report_sucess(next_task)
     py.test.raises(StopIteration, next, queue)
+
 
 def test_adding_the_same_twice_has_no_effect():
     queue = Queue()
@@ -75,7 +79,6 @@ def test_dependencies():
     assert len(queue.completed) == 4
 
 
-
 def test_dependency_cycle_wont_complete_all():
     queue = Queue()
     base = SimpleTask(1)
@@ -87,4 +90,3 @@ def test_dependency_cycle_wont_complete_all():
     assert set(queue.depends) > queue.completed
 
     py.test.raises(RuntimeError, queue.run_all)
-

@@ -9,6 +9,7 @@
 '''
 from py.path import local
 
+
 class PthFile(object):
     def __init__(self, path):
         self.path = local(path)
@@ -35,8 +36,6 @@ class PthFile(object):
             for path in self.entries:
                 rel = path.relto(self.path.dirpath())
                 if rel:
-                    f.write('./%s\n'%rel)
+                    f.write('./%s\n' % rel)
                 else:
-                    f.write('%s\n'%path)
-
-
+                    f.write('%s\n' % path)

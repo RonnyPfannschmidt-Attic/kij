@@ -34,5 +34,3 @@ class ReadYamlMetadata(TaskBase):
     def __call__(self):
         from pu.files.dist import DistFile
         self.result = DistFile(self.source.join('kij.yaml'))
-
-

@@ -13,6 +13,7 @@ task_failed = ns.signal('task_failed')
 task_succeeded = ns.signal('task_succeeded')
 task_finished = ns.signal('task_finished')
 
+
 class TaskBase(object):
     """
     utility base class for implementing Tasks
@@ -42,7 +43,7 @@ class TaskBase(object):
     def __repr__(self):
         return '<%s %s>' % (
                 type(self).__name__,
-                ' '.join('%s=%r' % k 
+                ' '.join('%s=%r' % k
                     for k in self._key()))
 
     # reporting dispatch
@@ -56,7 +57,7 @@ class TaskBase(object):
 
         name = getattr(item, 'category', item.__class__.__name__.lower())
         method = 'on_%s_%s' % (name, base)
-        default_method = 'on_'+name
+        default_method = 'on_' + name
         if hasattr(self, method):
             return getattr(self, method)(item)
         elif hasattr(self, default_method):
@@ -81,7 +82,6 @@ class TaskBase(object):
                     sender=task)
             self.queue.append(task)
 
-
     def next(self):
         if self.queue is None:
             self.queue = deque()
@@ -96,6 +96,3 @@ class TaskBase(object):
             return self.queue.popleft()
         else:
             raise StopIteration
-
-
-

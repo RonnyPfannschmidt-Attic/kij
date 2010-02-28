@@ -9,7 +9,8 @@
 # All configuration values have a default value; values that are commented out
 # serve to show the default value.
 
-import sys, os
+import os
+import sys
 
 cur = os.path.abspath(__file__)
 base = os.path.dirname(os.path.dirname(cur))
@@ -47,11 +48,11 @@ today_fmt = '%B %d, %Y'
 # List of documents that shouldn't be included in the build.
 #unused_docs = []
 
-# List of directories, relative to source directories, that shouldn't be searched
-# for source files.
+# List of directories, relative to source directories,
+# that shouldn't be searched for source files.
 exclude_trees = []
 
-# The reST default role (used for this markup: `text`) to use for all documents.
+# The reST default role (used for this markup: `text`) to use for all documents
 #default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
@@ -147,7 +148,7 @@ htmlhelp_basename = 'pudoc'
 #latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, document class [howto/manual]).
+#source start file, target name, title, author, document class [howto/manual]
 latex_documents = [
   ('index', 'anyvc.tex', u'pu Documentation',
    u'Pida Team', 'manual'),

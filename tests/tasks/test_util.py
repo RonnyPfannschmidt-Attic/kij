@@ -1,11 +1,14 @@
 import py
 from pu.tasks.util import TaskBase, task_succeeded, task_failed
 from pu.task_queue import Queue
+
+
 class Omg(TaskBase):
     keys = ()
 
     def __call__(self):
         pass
+
 
 class NeedOmg(Omg):
     keys = ()
@@ -20,6 +23,7 @@ class U(TaskBase):
 
     def on_u_success(self, item):
         return item.name
+
 
 def test_base():
     py.test.raises(KeyError, U, )
@@ -50,7 +54,6 @@ def test_base():
             u1._requirement_succeeded,
             sender=o):
         assert task_succeeded.send(o)[0][1] is None
-
 
 
 def test_requirement():

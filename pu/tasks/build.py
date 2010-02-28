@@ -1,5 +1,6 @@
 from pu.tasks.util import TaskBase
 
+
 class CopyModulesToBuild(TaskBase):
     keys = 'source', 'build_lib'
 
@@ -27,6 +28,3 @@ class CompileByteCode(TaskBase):
         from py_compile import compile
         for x in self.build_lib.visit('*.py'):
             compile(str(x))
-
-
-

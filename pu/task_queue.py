@@ -4,6 +4,7 @@
     :copyright: 2010 by Ronny Pfannschmidt <Ronny.Pfannschmidt@gmx.de>
 """
 
+
 class Queue(object):
     def __init__(self):
         self.depends = {}
@@ -25,13 +26,13 @@ class Queue(object):
                 if new_item is not None:
                     self.add(new_item, parent=k)
                     found.add(new_item)
-            if not v-self.completed:
+            if not v - self.completed:
                 self.runnable.add(k)
         return bool(found)
 
-
     def report_failure(self, t):
-        self.completed.add(t) #XXX: evil
+        #XXX: evil
+        self.completed.add(t)
         self.running.remove(t)
 
     def report_sucess(self, t):
@@ -71,7 +72,7 @@ class Queue(object):
     def run_all_possible(self):
         """runs all tasks it can complete
 
-        leaves the queue in a state where 
+        leaves the queue in a state where
         all completable tasks are completed
         """
         for item in self:
@@ -92,4 +93,3 @@ class Queue(object):
         self.run_all_possible()
         if len(self.completed) < len(self.depends):
             raise RuntimeError('not all tasks are executable')
-

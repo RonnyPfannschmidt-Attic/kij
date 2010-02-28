@@ -83,5 +83,3 @@ class DistFile(object):
 
     def __str__(self):
         return "<DistFile: %s>" % self.path
-
-

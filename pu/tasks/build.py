@@ -52,6 +52,7 @@ class CompileByteCode(TaskBase):
 
 
 class CopyScripts(TaskBase):
+    #XXX: fix shebangs
     keys = 'source', 'build_scripts'
     scripts = None
     requirements = ReadYamlMetadata,
@@ -67,3 +68,11 @@ class CopyScripts(TaskBase):
             #XXX: better error
             assert script.check(file=1), 'script %s missing'%script
             script.copy(target=self.build_scripts.join(script.basename))
+
+
+class Build(TaskBase):
+    keys = 'source', 'build_scripts', 'build_lib'
+    requirements = CopyScripts, CompileByteCode, CopyScripts
+
+    def __call__(self):
+        pass

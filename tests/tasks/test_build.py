@@ -1,15 +1,18 @@
-from pu.tasks.build import CopyModulesToBuild, CompileByteCode
+from pu.tasks.build import CopyPackagesToBuild, CompileByteCode
 from pu.task_queue import Queue
 
 
 def test_copy_build(source, tmpdir):
     source.ensure('testpkg/__init__.py')
-    source.join('kij.yml').write('name: test\npackages: testpkg\n')
-    task = CopyModulesToBuild(
+    source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
+    task = CopyPackagesToBuild(
                     source=source,
                     build_lib=tmpdir.join('build/lib'),
                     )
-    task()
+    
+    queue = Queue()
+    queue.add(task)
+    queue.run_all()
     assert tmpdir.join('build/lib/testpkg/__init__.py').check()
 
 
@@ -18,17 +21,14 @@ def test_build_and_compile(source, tmpdir):
     queue = Queue()
 
     source.ensure('testpkg/__init__.py')
+    source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
     build_lib = tmpdir.join('build/lib')
 
-    copy = CopyModulesToBuild(
-        source=source,
-        build_lib=build_lib,
-        )
-    queue.add(copy)
-
-    compile = CompileByteCode(build_lib=build_lib)
+    compile = CompileByteCode(
+            source=source,
+            build_lib=build_lib,
+            )
     queue.add(compile)
-    queue.add(copy, parent=compile)
 
     queue.run_all()
     target = build_lib.join('testpkg/__init__.pyc')

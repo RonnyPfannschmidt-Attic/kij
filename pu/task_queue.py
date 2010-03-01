@@ -1,12 +1,11 @@
-"""
+from pu.tasks.util import task_failed
+from pu.tasks.util import task_succeeded
 
-    :license: MIT/PSF
-    :copyright: 2010 by Ronny Pfannschmidt <Ronny.Pfannschmidt@gmx.de>
-"""
 
 
 class Queue(object):
     def __init__(self):
+        self._key_to_identity = {}
         self.depends = {}
         self.completed = set()
         self.runnable = set()
@@ -16,7 +15,7 @@ class Queue(object):
     def find_and_add_new_runnable(self):
         found = set()
 
-        for k, v in self.depends.items():
+        for k, v in  self.depends.items():
             if k in self.completed:
                 continue
             if k in self.running:
@@ -24,20 +23,22 @@ class Queue(object):
             if hasattr(k, '__iter__'):
                 new_item = next(k, None)
                 if new_item is not None:
-                    self.add(new_item, parent=k)
+                    new_item = self.add(new_item, parent=k)
                     found.add(new_item)
             if not v - self.completed:
                 self.runnable.add(k)
         return bool(found)
 
-    def report_failure(self, t):
+    def report_failure(self, task):
         #XXX: evil
-        self.completed.add(t)
-        self.running.remove(t)
+        task_failed.send(task)
+        self.completed.add(task)
+        self.running.remove(task)
 
-    def report_sucess(self, t):
-        self.completed.add(t)
-        self.running.remove(t)
+    def report_sucess(self, task):
+        task_succeeded.send(task)
+        self.completed.add(task)
+        self.running.remove(task)
 
     def next(self):
         if not self.runnable:
@@ -63,11 +64,19 @@ class Queue(object):
         """add a `task`
         if `parent` is given this task is a new dependency for parent
         """
+        if parent:
+            assert parent in self.depends
 
         if task not in self.depends:
             self.depends[task] = set()
+            self._key_to_identity[task] = task
+        else:
+            task = self._key_to_identity[task]
         if parent:
             self.depends[parent].add(task)
+            task_succeeded.connect(parent._requirement_succeeded, sender=task)
+            task_failed.connect(parent._requirement_failed, sender=task)
+        return task
 
     def run_all_possible(self):
         """runs all tasks it can complete
@@ -76,6 +85,7 @@ class Queue(object):
         all completable tasks are completed
         """
         for item in self:
+            print 'trying to run', item
             try:
                 item()
                 self.report_sucess(item)
@@ -92,4 +102,8 @@ class Queue(object):
         """
         self.run_all_possible()
         if len(self.completed) < len(self.depends):
+            print 'completed: \n ', '\n  '.join(str(x)
+                                                for x in sorted(self.completed))
+            print 'depends', '\n  '.join(str(x)
+                                         for x in sorted(self.depends))
             raise RuntimeError('not all tasks are executable')

@@ -1,28 +1,22 @@
 import py
 from pu.task_queue import Queue
 from pu.tasks.install import LinkPTH
+from pu.tasks.util import TaskBase
 
-
-class SimpleTask(object):
-
-    def __init__(self, number):
-        self.number = number
-        self.ndeps = number
-        self.called = False
-
-    def __hash__(self):
-        return hash(self.number)
+class SimpleTask(TaskBase):
+    ndeps = None
+    keys = 'number',
+    called = False
 
     def __repr__(self):
         return '<ST %d>' % self.number
 
-    def __iter__(self):
-        return self
-
     def next(self):
+        if self.ndeps is None:
+            self.ndeps = self.number
         if self.ndeps:
             self.ndeps -= 1
-            return SimpleTask(self.ndeps)
+            return SimpleTask(number=self.ndeps)
         raise StopIteration
 
     def __eq__(self, other):
@@ -34,6 +28,13 @@ class SimpleTask(object):
         print self.number
 
 
+class WeirdTask(TaskBase):
+    keys = 'number',
+    called = False
+    requirements = SimpleTask,
+    def __call__(self):
+        self.called = True
+
 def test_create():
     Queue()
 
@@ -41,7 +42,7 @@ def test_create():
 def test_simple():
     queue = Queue()
     # will create SimpleTask(0) as dependency
-    queue.add(SimpleTask(1))
+    queue.add(SimpleTask(number=1))
     first_task = next(queue)
     assert first_task.number == 0
 
@@ -58,8 +59,8 @@ def test_simple():
 
 def test_adding_the_same_twice_has_no_effect():
     queue = Queue()
-    queue.add(SimpleTask(0))
-    queue.add(SimpleTask(0))
+    queue.add(SimpleTask(number=0))
+    queue.add(SimpleTask(number=0))
     assert len(queue) == 1
 
 
@@ -74,14 +75,14 @@ def test_run_all(source, site):
 
 def test_dependencies():
     queue = Queue()
-    queue.add(SimpleTask(3))
+    queue.add(SimpleTask(number=3))
     queue.run_all()
     assert len(queue.completed) == 4
 
 
 def test_dependency_cycle_wont_complete_all():
     queue = Queue()
-    base = SimpleTask(1)
+    base = SimpleTask(number=1)
 
     queue.add(base)
     a_runnable = next(queue)
@@ -90,3 +91,11 @@ def test_dependency_cycle_wont_complete_all():
     assert set(queue.depends) > queue.completed
 
     py.test.raises(RuntimeError, queue.run_all)
+
+
+def test_dependencies():
+    queue = Queue()
+    task = queue.add(WeirdTask(number=1))
+    queue.run_all()
+    print queue.completed
+    assert task.called

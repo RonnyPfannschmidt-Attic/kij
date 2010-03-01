@@ -37,7 +37,7 @@ class TaskBase(object):
         return hash(self._key())
 
     def __eq__(self, other):
-        return (isinstance(other, TaskBase)
+        return (type(self) == type(other)
                 and self._key() == other._key())
 
     def __repr__(self):
@@ -48,13 +48,6 @@ class TaskBase(object):
 
     # reporting dispatch
     def _dispatch(self, base, item):
-        task_succeeded.disconnect(
-                self._requirement_succeeded,
-                sender=item)
-        task_succeeded.disconnect(
-                self._requirement_failed,
-                sender=item)
-
         name = getattr(item, 'category', item.__class__.__name__.lower())
         method = 'on_%s_%s' % (name, base)
         default_method = 'on_' + name
@@ -73,14 +66,14 @@ class TaskBase(object):
 
     def _enqueue_next_requirement(self):
         if self.requirements:
-            task = self.requirements.popleft()(**self._kw)
-            task_succeeded.connect(
-                    self._requirement_succeeded,
-                    sender=task)
-            task_failed.connect(
-                    self._requirement_failed,
-                    sender=task)
+            print 'equeue next for', self
+            req = self.requirements.popleft()
+            task = req(**self._kw)
+            print 'made', task
             self.queue.append(task)
+
+    def __iter__(self):
+        return self
 
     def next(self):
         if self.queue is None:
@@ -90,6 +83,7 @@ class TaskBase(object):
             #     the returned requirement might already be in the queue
             #     but with different identity
             if self.requirements:
+                print self, 'needs', self.requirements
                 self.requirements = deque(self.requirements)
                 self._enqueue_next_requirement()
         if self.queue:

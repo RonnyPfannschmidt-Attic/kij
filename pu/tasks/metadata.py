@@ -1,4 +1,4 @@
-from .util import TaskBase
+from .util import TaskBase, task_succeeded
 
 
 def find_packages(base, start):
@@ -10,7 +10,7 @@ def find_packages(base, start):
                 yield result
 
 
-class FindPackages(TaskBase):
+class FindSubPackages(TaskBase):
     keys = 'source', 'match',
     result = None
 
@@ -22,6 +22,7 @@ class FindPackages(TaskBase):
 
         self.result = list(find_packages(self.source,
                                          self.source.join(*elements)))
+        print 'found', self.result
         if not self.result:
             raise IOError('package %s not found below %s' % (
                            self.match, self.source))
@@ -30,7 +31,27 @@ class FindPackages(TaskBase):
 class ReadYamlMetadata(TaskBase):
     keys = 'source',
     result = None
-
+    requirements = ()
     def __call__(self):
         from pu.files.dist import DistFile
-        self.result = DistFile(self.source.join('kij.yaml'))
+        self.result = DistFile(self.source.join('kij.yml'))
+
+
+class FindPackages(TaskBase):
+    keys = 'source',
+    requirements = ReadYamlMetadata,
+
+    def on_readyamlmetadata_success(self, item):
+        self.result = []
+        for package in item.result.packages:
+            task = FindSubPackages(
+                match=package,
+                source=self.source)
+            self.queue.append(task)
+
+    def on_findsubpackages_success(self, item):
+        print item
+        self.result.extend(item.result)
+
+    def __call__(self):
+        assert self.result

@@ -1,5 +1,5 @@
 from pu.tasks.util import TaskBase
-from pu.tasks.metadata import FindPackages
+from pu.tasks.metadata import FindPackages, ReadYamlMetadata
 
 import logging
 log = logging.getLogger('kij.build')
@@ -49,3 +49,21 @@ class CompileByteCode(TaskBase):
         from py_compile import compile
         for x in self.build_lib.visit('*.py'):
             compile(str(x))
+
+
+class CopyScripts(TaskBase):
+    keys = 'source', 'build_scripts'
+    scripts = None
+    requirements = ReadYamlMetadata,
+
+    def on_readyamlmetadata_success(self, item):
+        self.scripts = item.result.scripts or ()
+
+    def __call__(self):
+        self.build_scripts.ensure(dir=True)
+        for script in self.scripts:
+            script = self.source.join(script)
+            print script
+            #XXX: better error
+            assert script.check(file=1), 'script %s missing'%script
+            script.copy(target=self.build_scripts.join(script.basename))

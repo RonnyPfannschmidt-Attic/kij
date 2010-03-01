@@ -50,7 +50,7 @@ from py.path import local
 
 
 DIST_FILE_KEYS = set((
-    'packages', 'summary',
+    'packages', 'summary', 'scripts'
 ))
 
 

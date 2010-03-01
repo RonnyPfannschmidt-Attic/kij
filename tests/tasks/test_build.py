@@ -1,4 +1,4 @@
-from pu.tasks.build import CopyPackagesToBuild, CompileByteCode
+from pu.tasks.build import CopyPackagesToBuild, CompileByteCode, CopyScripts
 from pu.task_queue import Queue
 
 
@@ -9,7 +9,6 @@ def test_copy_build(source, tmpdir):
                     source=source,
                     build_lib=tmpdir.join('build/lib'),
                     )
-    
     queue = Queue()
     queue.add(task)
     queue.run_all()
@@ -39,3 +38,24 @@ def test_build_and_compile(source, tmpdir):
     magic = imp.get_magic()
     target_magic = target.read()[:4]
     assert target_magic == magic
+
+
+def test_copy_scripts(source, tmpdir):
+    source.join('kij.yml').write('name: test\nscripts: [foo, bin/bar]')
+    source.ensure('foo')
+    source.ensure('bin/bar')
+
+    build_scripts = tmpdir.join('build/scripts')
+    task = CopyScripts(
+            source=source,
+            build_scripts=build_scripts,
+            )
+
+    queue = Queue()
+    queue.add(task)
+    queue.run_all()
+    assert len(build_scripts.listdir()) == 2
+
+
+
+

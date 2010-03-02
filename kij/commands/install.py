@@ -3,7 +3,7 @@
     :license: MIT/PSF
     :copyright: 2010 by Ronny Pfannschmidt <Ronny.Pfannschmidt@gmx.de>
 """
-from pu.tasks.install import LinkPTH
+from kij.tasks.install import LinkPTH
 
 
 def link_command(config, queue):

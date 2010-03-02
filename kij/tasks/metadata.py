@@ -1,4 +1,5 @@
 from .util import TaskBase, task_succeeded
+from kij.files.dist import DistFile
 
 
 def find_packages(base, start):
@@ -33,7 +34,6 @@ class ReadYamlMetadata(TaskBase):
     result = None
     requirements = ()
     def __call__(self):
-        from pu.files.dist import DistFile
         self.result = DistFile(self.source.join('kij.yml'))
 
 

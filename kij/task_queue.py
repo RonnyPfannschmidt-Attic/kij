@@ -1,5 +1,5 @@
-from pu.tasks.util import task_failed
-from pu.tasks.util import task_succeeded
+from kij.tasks.util import task_failed
+from kij.tasks.util import task_succeeded
 
 
 

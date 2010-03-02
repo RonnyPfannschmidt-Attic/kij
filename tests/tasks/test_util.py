@@ -1,6 +1,6 @@
 import py
-from pu.tasks.util import TaskBase, task_succeeded, task_failed
-from pu.task_queue import Queue
+from kij.tasks.util import TaskBase, task_succeeded, task_failed
+from kij.task_queue import Queue
 
 
 class Omg(TaskBase):

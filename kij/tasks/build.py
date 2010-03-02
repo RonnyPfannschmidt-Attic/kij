@@ -1,5 +1,5 @@
-from pu.tasks.util import TaskBase
-from pu.tasks.metadata import FindPackages, ReadYamlMetadata
+from kij.tasks.util import TaskBase
+from kij.tasks.metadata import FindPackages, ReadYamlMetadata
 
 import logging
 log = logging.getLogger('kij.build')

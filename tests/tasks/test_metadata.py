@@ -1,7 +1,7 @@
 import py
-from pu.tasks.metadata import FindSubPackages, find_packages as gen_find_packages
-from pu.tasks.metadata import ReadYamlMetadata, FindPackages
-from pu.task_queue import Queue
+from kij.tasks.metadata import FindSubPackages, find_packages as gen_find_packages
+from kij.tasks.metadata import ReadYamlMetadata, FindPackages
+from kij.task_queue import Queue
 
 def find_packages(source, pkg):
     return list(gen_find_packages(source, pkg))

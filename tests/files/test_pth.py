@@ -1,5 +1,5 @@
 import py
-from pu.files.pth import PthFile
+from kij.files.pth import PthFile
 
 
 def pytest_funcarg__pthfile(request):

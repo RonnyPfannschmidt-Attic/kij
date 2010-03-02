@@ -1,6 +1,6 @@
-from pu.tasks.build import CopyPackagesToBuild, CompileByteCode, \
+from kij.tasks.build import CopyPackagesToBuild, CompileByteCode, \
         CopyScripts, Build
-from pu.task_queue import Queue
+from kij.task_queue import Queue
 
 
 def test_copy_build(source, tmpdir):

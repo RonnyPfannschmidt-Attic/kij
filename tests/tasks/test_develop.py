@@ -1,5 +1,5 @@
-from pu.tasks.install import LinkPTH, UnlinkPTH
-from pu.files.pth import PthFile
+from kij.tasks.install import LinkPTH, UnlinkPTH
+from kij.files.pth import PthFile
 
 
 def test_enable(site, source):

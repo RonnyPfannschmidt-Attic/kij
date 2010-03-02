@@ -1,4 +1,4 @@
-from pu.files.pth import PthFile
+from kij.files.pth import PthFile
 
 
 class LinkTask(object):

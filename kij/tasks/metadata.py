@@ -1,5 +1,5 @@
 from . import TaskBase
-from kij.files.dist import DistFile
+from kij.storage.dist import DistFile
 
 
 def find_packages(base, start):

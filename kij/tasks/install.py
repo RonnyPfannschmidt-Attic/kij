@@ -1,4 +1,4 @@
-from kij.files.pth import PthFile
+from kij.storage.pth import PthFile
 
 
 class LinkTask(object):

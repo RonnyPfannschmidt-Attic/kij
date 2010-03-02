@@ -1,5 +1,5 @@
 import py
-from kij.files.dist import DistFile, DistFileError
+from kij.storage.dist import DistFile, DistFileError
 
 
 def pytest_funcarg__distfile(request):

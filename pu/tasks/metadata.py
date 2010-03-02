@@ -43,6 +43,8 @@ class FindPackages(TaskBase):
 
     def on_readyamlmetadata_success(self, item):
         self.result = []
+        print 'got yaml for', self
+        print item.result.packages
         for package in item.result.packages:
             task = FindSubPackages(
                 match=package,

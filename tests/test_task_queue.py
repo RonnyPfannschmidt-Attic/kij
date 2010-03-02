@@ -50,10 +50,10 @@ def test_simple():
 
     assert isinstance(first_task, SimpleTask)
 
-    queue.report_sucess(first_task)
+    queue.report_success(first_task)
     next_task = next(queue)
     assert next_task.number == 1
-    queue.report_sucess(next_task)
+    queue.report_success(next_task)
     py.test.raises(StopIteration, next, queue)
 
 

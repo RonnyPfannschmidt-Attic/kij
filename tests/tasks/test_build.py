@@ -76,6 +76,7 @@ def test_build_(source, tmpdir):
 
     queue = Queue()
     queue.add(task)
+
     queue.run_all()
     assert len(tmpdir.join('scripts').listdir()) == 2
     assert tmpdir.join('lib/testpkg/__init__.py').check()

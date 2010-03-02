@@ -52,5 +52,5 @@ def test_find_packages_task(source):
     queue.run_all_possible()
     for k, v in queue.depends.items():
         print k, 'depends on', v
-    assert task.result == ['foo', 'bar']
+    assert sorted(task.result) == ['bar', 'foo']
 

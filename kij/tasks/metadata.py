@@ -1,4 +1,4 @@
-from .util import TaskBase, task_succeeded
+from .util import TaskBase
 from kij.files.dist import DistFile
 
 

@@ -6,12 +6,7 @@
 """
 
 from collections import deque
-from blinker import Namespace
 
-ns = Namespace()
-task_failed = ns.signal('task_failed')
-task_succeeded = ns.signal('task_succeeded')
-task_finished = ns.signal('task_finished')
 
 
 class TaskBase(object):

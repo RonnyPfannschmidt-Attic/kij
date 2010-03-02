@@ -1,6 +1,7 @@
-from kij.tasks.util import task_failed
-from kij.tasks.util import task_succeeded
-
+from kij.util import signal
+task_failed = signal('task_failed')
+task_succeeded = signal('task_succeeded')
+task_finished = signal('task_finished')
 
 
 class Queue(object):

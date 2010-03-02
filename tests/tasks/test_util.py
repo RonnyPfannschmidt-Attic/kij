@@ -1,5 +1,5 @@
 import py
-from kij.tasks.util import TaskBase
+from kij.tasks import TaskBase
 from kij.util import task_succeeded, task_failed
 from kij.task_queue import Queue
 

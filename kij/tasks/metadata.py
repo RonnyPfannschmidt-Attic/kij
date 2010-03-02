@@ -1,4 +1,4 @@
-from .util import TaskBase
+from . import TaskBase
 from kij.files.dist import DistFile
 
 

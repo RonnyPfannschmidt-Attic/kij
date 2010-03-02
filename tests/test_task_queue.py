@@ -1,7 +1,7 @@
 import py
 from kij.task_queue import Queue
 from kij.tasks.install import LinkPTH
-from kij.tasks.util import TaskBase
+from kij.tasks import TaskBase
 
 class SimpleTask(TaskBase):
     ndeps = None

@@ -1,4 +1,4 @@
-from kij.tasks.util import TaskBase
+from kij.tasks import TaskBase
 from kij.tasks.metadata import FindPackages, ReadYamlMetadata
 
 import logging

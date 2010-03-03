@@ -1,6 +1,12 @@
+
 name: kij
-summary: experiment about replacing distutils, setuptools, virtualenv and pip
-version: !sh hg parents --template '{latesttag}.dev{latesttagdistance}\n'
+
+summary: Python packaging and distribution utilities
+
 packages:
-- kij.*
+    - kij.*
+
+scripts:
+    - bin/kij
+
 

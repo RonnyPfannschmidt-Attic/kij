@@ -1,0 +1,14 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+kij script
+~~~~~~~~~~
+"""
+
+from kij.commands import kij_script
+
+
+if __name__ == '__main__':
+    kij_script.main()
+

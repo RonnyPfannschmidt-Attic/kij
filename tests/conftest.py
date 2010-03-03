@@ -1,5 +1,7 @@
+
 from sanescript.config import Config
 
+from kij.commands import kij_script
 
 def pytest_funcarg__site(request):
     tmpdir = request.getfuncargvalue('tmpdir')
@@ -29,5 +31,12 @@ def pytest_funcarg__config(request):
     config.grab_from_dict(dict(
             site=site,
             source=source,
+            source_directory=source,
             ))
     return config
+
+def pytest_funcarg__script(request):
+    config = request.getfuncargvalue('config')
+    kij_script._config.grab_from_ns(config)
+    return kij_script
+

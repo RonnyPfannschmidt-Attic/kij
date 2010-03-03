@@ -2,13 +2,12 @@
 import sys
 VERSION_INFO = tuple(sys.version_info[:2])
 
-from kij.commands.build import build_command
+from kij.commands.build import BuildCommand
+from kij.commands import kij_script
 from kij.task_queue import Queue
 
-def test_build_command(config, site, fullsource):
-    queue = Queue()
-    build_command(config, queue)
-    queue.run_all()
+def test_build_command(script, fullsource):
+    script.main(['kij', 'build'])
     build = fullsource.join('build')
     assert build.check()
     assert build.join('lib').check()

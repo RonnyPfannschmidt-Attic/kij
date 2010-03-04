@@ -1,3 +1,4 @@
 \.pida-metadata
 .*.pyc
-build
+^build
+^coverage

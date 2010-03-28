@@ -1,12 +1,9 @@
 from kij.storage.pth import PthFile
+from . import TaskBase
 
-
-class LinkTask(object):
+class LinkTask(TaskBase):
     pth_name = 'pu-links.pth'
-
-    def __init__(self, site, source):
-        self.site = site
-        self.source = source
+    keys = 'site', 'source'
 
     def __call__(self):
         self.run()

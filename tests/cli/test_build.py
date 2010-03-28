@@ -6,10 +6,8 @@ from kij.commands.build import BuildCommand
 from kij.commands import kij_script
 from kij.task_queue import Queue
 
-def test_build_command(script, fullsource):
+def test_build_command(script, fullsource, build_lib, build_scripts):
     script.main(['kij', 'build'])
-    build = fullsource.join('build')
-    assert build.check()
-    assert build.join('lib').check()
-    assert build.join('scripts-%s.%s' % VERSION_INFO).check()
+    assert build_lib.check()
+    assert build_scripts.check()
 

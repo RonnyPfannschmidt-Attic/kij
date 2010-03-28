@@ -3,31 +3,24 @@ from kij.tasks.build import CopyPackagesToBuild, CompileByteCode, \
 from kij.task_queue import Queue
 
 
-def test_copy_build(source, tmpdir):
+def test_copy_build(source,config):
     source.ensure('testpkg/__init__.py')
     source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
-    task = CopyPackagesToBuild(
-                    source=source,
-                    build_lib=tmpdir.join('build/lib'),
-                    )
+    task = CopyPackagesToBuild(config)
     queue = Queue()
     queue.add(task)
     queue.run_all()
-    assert tmpdir.join('build/lib/testpkg/__init__.py').check()
+    assert config.build_lib.join('testpkg/__init__.py').check()
 
 
-def test_build_and_compile(source, tmpdir):
+def test_build_and_compile(source, tmpdir, config, build_lib):
 
     queue = Queue()
 
     source.ensure('testpkg/__init__.py')
     source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
-    build_lib = tmpdir.join('build/lib')
 
-    compile = CompileByteCode(
-            source=source,
-            build_lib=build_lib,
-            )
+    compile = CompileByteCode(config)
     queue.add(compile)
 
     queue.run_all()
@@ -41,17 +34,11 @@ def test_build_and_compile(source, tmpdir):
     assert target_magic == magic
 
 
-def test_copy_scripts(source, tmpdir):
+def test_copy_scripts(config, source, build_scripts):
     source.join('kij.yml').write('name: test\nscripts: [foo, bin/bar]')
     source.ensure('foo')
     source.ensure('bin/bar')
-
-    build_scripts = tmpdir.join('build/scripts')
-    task = CopyScripts(
-            source=source,
-            build_scripts=build_scripts,
-            )
-
+    task = CopyScripts(config)
     queue = Queue()
     queue.add(task)
     queue.run_all()

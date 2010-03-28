@@ -3,17 +3,21 @@ from sanescript.config import Config
 
 from kij.commands import kij_script
 
-def pytest_funcarg__site(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
-    return tmpdir.ensure('site', dir=True)
 
+# python stuff
+dirs = {
+    'site': 'site',
+    'source': 'source',
+    'build_lib': 'build/lib',
+    'build_scripts': 'builds/scripts',
+}
 
-def pytest_funcarg__source(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
-    return tmpdir.ensure('source', dir=True)
+for name in dirs:
+    globals()['pytest_funcarg__' + name] = lambda request, name=name: getattr(request.getfuncargvalue('config'), name)
+
 
 def pytest_funcarg__fullsource(request):
-    source = request.getfuncargvalue('source')
+    source = request.getfuncargvalue('config').source
     source.join('kij.yml').write(
             'name: test\n'
             'scripts: [foo, bin/bar]\n'
@@ -25,14 +29,14 @@ def pytest_funcarg__fullsource(request):
     return source
 
 def pytest_funcarg__config(request):
-    source = request.getfuncargvalue('source')
-    site = request.getfuncargvalue('site')
+    tmpdir = request.getfuncargvalue('tmpdir')
+
+    paths = {}
+    for name, subdir in dirs.items():
+        paths[name] = tmpdir.ensure(subdir, dir=1)
+
     config = Config()
-    config.grab_from_dict(dict(
-            site=site,
-            source=source,
-            source_directory=source,
-            ))
+    config.grab_from_dict(paths)
     return config
 
 def pytest_funcarg__script(request):

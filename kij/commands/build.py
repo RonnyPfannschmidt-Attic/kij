@@ -16,14 +16,13 @@ VERSION_INFO = tuple(sys.version_info[:2])
 
 
 def build_command(config, queue):
-    build = config.source_directory.ensure('build', dir=True)
+    build = config.source.ensure('build', dir=True)
     build_lib = build.ensure('lib', dir=True)
-    build_scripts = build.ensure('scripts-%s.%s' % VERSION_INFO, dir=True)
-    task = Build(
-        source=config.source_directory,
-        build_lib=build_lib,
-        build_scripts=build_scripts,
-    )
+    #build_scripts = build.ensure('scripts-%s.%s' % VERSION_INFO, dir=True)
+    config.build_scripts = build.ensure('scripts-%s.%s' % VERSION_INFO, dir=True) #XXX: hackish
+    config.build_lib = build_lib
+
+    task = Build(config)
     queue.add(task)
 
 

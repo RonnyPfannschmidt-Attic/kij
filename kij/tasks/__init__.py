@@ -18,15 +18,25 @@ class TaskBase(object):
     requirements = ()
     queue = None
 
-    def __init__(self, **kw):
+    def __init__(self, config=None, **kw):
+
         for key in self.keys:
-            setattr(self, key, kw[key])
+            if key in kw:
+                setattr(self, key, kw[key])
+            elif hasattr(config, key):
+                setattr(self, key, getattr(config, key))
+            else:
+                raise KeyError('%r required to set up %s' % (
+                    key,
+                    type(self).__name__)
+                    )
 
         self._kw = kw
+        self._config = config
 
     # hashing and equality
     def _key(self):
-        return tuple((key, getattr(self, key)) for key in self.keys)
+        return tuple((key, getattr(self, key, LookupError)) for key in self.keys)
 
     def __hash__(self):
         return hash(self._key())
@@ -63,7 +73,7 @@ class TaskBase(object):
         if self.requirements:
             print 'equeue next for', self
             req = self.requirements.popleft()
-            task = req(**self._kw)
+            task = req(self._config, **self._kw)
             print 'made', task
             self.queue.append(task)
 

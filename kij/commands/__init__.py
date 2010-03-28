@@ -20,7 +20,7 @@ class KijScript(Script):
 
     options = [
         Option(
-            'source_directory',
+            'source',
             help='The source code directory',
             default=py.path.local(os.getcwd()),
             processor=py.path.local

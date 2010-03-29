@@ -1,7 +1,8 @@
 
-from sanescript.config import Config
 
-from kij.commands import kij_script
+class Config(object):
+    def __init__(self, vars):
+        self.__dict__.update(vars)
 
 
 # python stuff
@@ -35,12 +36,4 @@ def pytest_funcarg__config(request):
     for name, subdir in dirs.items():
         paths[name] = tmpdir.ensure(subdir, dir=1)
 
-    config = Config()
-    config.grab_from_dict(paths)
-    return config
-
-def pytest_funcarg__script(request):
-    config = request.getfuncargvalue('config')
-    kij_script._config.grab_from_ns(config)
-    return kij_script
-
+    return Config(paths)

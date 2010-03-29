@@ -1,11 +1,18 @@
+import py
 from kij.tasks.build import CopyPackagesToBuild, CompileByteCode, \
         CopyScripts, Build
 from kij.task_queue import Queue
 
+package_contents = {
+    'testpkg/__init__.py': '',
+    'kij.yml': 'name: test\npackages: [testpkg]\n',
+}
 
-def test_copy_build(source,config):
-    source.ensure('testpkg/__init__.py')
-    source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
+has_source = py.test.mark.has_source(package_contents)
+
+
+@has_source
+def test_copy_build(source, config):
     task = CopyPackagesToBuild(config)
     queue = Queue()
     queue.add(task)
@@ -13,12 +20,10 @@ def test_copy_build(source,config):
     assert config.build_lib.join('testpkg/__init__.py').check()
 
 
+@has_source
 def test_build_and_compile(source, tmpdir, config, build_lib):
 
     queue = Queue()
-
-    source.ensure('testpkg/__init__.py')
-    source.join('kij.yml').write('name: test\npackages: [testpkg]\n')
 
     compile = CompileByteCode(config)
     queue.add(compile)
